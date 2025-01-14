@@ -500,8 +500,15 @@ where
         skippable::skippable(self)
     }
 
-    /// returns two sources, the second source is inactive and will return
-    /// `None` until the first has passed the split_point.
+    /// returns two new sources that are continues segments of `self`.
+    /// The second segment is inactive and will return None until the
+    /// first segment has passed the provided split_point.
+    ///
+    /// # Seeking
+    /// If you seek outside the range of a segment the segment will
+    /// deactivate itself such that the other segment can play. This
+    /// works well when searching forward. Seeking back can require you
+    /// to play the previous segment again.
     fn split_once(self, at: Duration) -> [SplitAt<Self>; 2]
     where
         Self: Sized,
