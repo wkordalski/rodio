@@ -10,6 +10,16 @@ pub fn lerp(first: &f32, second: &f32, numerator: u32, denominator: u32) -> f32 
     first + (second - first) * numerator as f32 / denominator as f32
 }
 
+/// short macro to generate a `ChannelCount` for tests
+/// this panics during compile if the passed in literal is zero
+macro_rules! ch {
+    ($n:literal) => {
+        const { core::num::NonZeroU16::new($n).unwrap() }
+    };
+}
+
+pub(crate) use ch;
+
 #[cfg(test)]
 mod test {
     use super::*;
