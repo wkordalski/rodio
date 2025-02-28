@@ -8,7 +8,7 @@ use std::mem;
 use std::str::FromStr;
 use std::time::Duration;
 
-use crate::math::ch;
+use crate::math::nz;
 use crate::source::SeekError;
 use crate::{Sample, Source};
 
@@ -132,7 +132,7 @@ impl<R: Read + Seek> DecoderImpl<R> {
             DecoderImpl::Mp3(source) => source.channels(),
             #[cfg(feature = "symphonia")]
             DecoderImpl::Symphonia(source) => source.channels(),
-            DecoderImpl::None(_) => ch!(1),
+            DecoderImpl::None(_) => nz!(1),
         }
     }
 
@@ -149,7 +149,7 @@ impl<R: Read + Seek> DecoderImpl<R> {
             DecoderImpl::Mp3(source) => source.sample_rate(),
             #[cfg(feature = "symphonia")]
             DecoderImpl::Symphonia(source) => source.sample_rate(),
-            DecoderImpl::None(_) => 1,
+            DecoderImpl::None(_) => nz!(1),
         }
     }
 

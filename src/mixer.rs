@@ -198,23 +198,27 @@ impl MixerSource {
 #[cfg(test)]
 mod tests {
     use crate::buffer::SamplesBuffer;
-    use crate::math::ch;
+    use crate::math::nz;
     use crate::mixer;
     use crate::source::Source;
 
     #[test]
     fn basic() {
-        let (tx, mut rx) = mixer::mixer(ch!(1), 48000);
+        let (tx, mut rx) = mixer::mixer(nz!(1), nz!(48000));
 
         tx.add(SamplesBuffer::new(
-            ch!(1),
-            48000,
+            nz!(1),
+            nz!(48000),
             vec![10.0, -10.0, 10.0, -10.0],
         ));
-        tx.add(SamplesBuffer::new(ch!(1), 48000, vec![5.0, 5.0, 5.0, 5.0]));
+        tx.add(SamplesBuffer::new(
+            nz!(1),
+            nz!(48000),
+            vec![5.0, 5.0, 5.0, 5.0],
+        ));
 
-        assert_eq!(rx.channels(), ch!(1));
-        assert_eq!(rx.sample_rate(), 48000);
+        assert_eq!(rx.channels(), nz!(1));
+        assert_eq!(rx.sample_rate().get(), 48000);
         assert_eq!(rx.next(), Some(15.0));
         assert_eq!(rx.next(), Some(-5.0));
         assert_eq!(rx.next(), Some(15.0));
@@ -224,17 +228,21 @@ mod tests {
 
     #[test]
     fn channels_conv() {
-        let (tx, mut rx) = mixer::mixer(ch!(2), 48000);
+        let (tx, mut rx) = mixer::mixer(nz!(2), nz!(48000));
 
         tx.add(SamplesBuffer::new(
-            ch!(1),
-            48000,
+            nz!(1),
+            nz!(48000),
             vec![10.0, -10.0, 10.0, -10.0],
         ));
-        tx.add(SamplesBuffer::new(ch!(1), 48000, vec![5.0, 5.0, 5.0, 5.0]));
+        tx.add(SamplesBuffer::new(
+            nz!(1),
+            nz!(48000),
+            vec![5.0, 5.0, 5.0, 5.0],
+        ));
 
-        assert_eq!(rx.channels(), ch!(2));
-        assert_eq!(rx.sample_rate(), 48000);
+        assert_eq!(rx.channels(), nz!(2));
+        assert_eq!(rx.sample_rate().get(), 48000);
         assert_eq!(rx.next(), Some(15.0));
         assert_eq!(rx.next(), Some(15.0));
         assert_eq!(rx.next(), Some(-5.0));
@@ -248,17 +256,21 @@ mod tests {
 
     #[test]
     fn rate_conv() {
-        let (tx, mut rx) = mixer::mixer(ch!(1), 96000);
+        let (tx, mut rx) = mixer::mixer(nz!(1), nz!(96000));
 
         tx.add(SamplesBuffer::new(
-            ch!(1),
-            48000,
+            nz!(1),
+            nz!(48000),
             vec![10.0, -10.0, 10.0, -10.0],
         ));
-        tx.add(SamplesBuffer::new(ch!(1), 48000, vec![5.0, 5.0, 5.0, 5.0]));
+        tx.add(SamplesBuffer::new(
+            nz!(1),
+            nz!(48000),
+            vec![5.0, 5.0, 5.0, 5.0],
+        ));
 
-        assert_eq!(rx.channels(), ch!(1));
-        assert_eq!(rx.sample_rate(), 96000);
+        assert_eq!(rx.channels(), nz!(1));
+        assert_eq!(rx.sample_rate().get(), 96000);
         assert_eq!(rx.next(), Some(15.0));
         assert_eq!(rx.next(), Some(5.0));
         assert_eq!(rx.next(), Some(-5.0));
@@ -271,11 +283,11 @@ mod tests {
 
     #[test]
     fn start_afterwards() {
-        let (tx, mut rx) = mixer::mixer(ch!(1), 48000);
+        let (tx, mut rx) = mixer::mixer(nz!(1), nz!(48000));
 
         tx.add(SamplesBuffer::new(
-            ch!(1),
-            48000,
+            nz!(1),
+            nz!(48000),
             vec![10.0, -10.0, 10.0, -10.0],
         ));
 
@@ -283,8 +295,8 @@ mod tests {
         assert_eq!(rx.next(), Some(-10.0));
 
         tx.add(SamplesBuffer::new(
-            ch!(1),
-            48000,
+            nz!(1),
+            nz!(48000),
             vec![5.0, 5.0, 6.0, 6.0, 7.0, 7.0, 7.0],
         ));
 
@@ -294,7 +306,7 @@ mod tests {
         assert_eq!(rx.next(), Some(6.0));
         assert_eq!(rx.next(), Some(6.0));
 
-        tx.add(SamplesBuffer::new(ch!(1), 48000, vec![2.0]));
+        tx.add(SamplesBuffer::new(nz!(1), nz!(48000), vec![2.0]));
 
         assert_eq!(rx.next(), Some(9.0));
         assert_eq!(rx.next(), Some(7.0));
